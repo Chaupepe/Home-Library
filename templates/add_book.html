@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить книгу — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы добавления книги (без изменений) -->
+    <link rel="stylesheet" href="/static/add_book.css">
+</head>
+<body>
+    <main class="add-book-page" aria-labelledby="add-book-heading">
+        <div class="add-book-card">
+            <header class="add-book-header">
+                <h1 id="add-book-heading" class="add-book-title">Добавить книгу</h1>
+                <p class="add-book-subtitle">Заполните информацию о книге</p>
+            </header>
+
+            <form class="add-book-form" method="post" action="/root/profile/add_book" aria-label="Форма добавления книги">
+                <!-- CSRF токен (если нужен) -->
+                <!-- <input type="hidden" name="csrf_token" value="..."> -->
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">title</span>
+                        <input type="text" id="name" name="name" class="form-input"
+                               placeholder="Название" minlength="1" maxlength="50"
+                               required aria-required="true">
+                        <label for="name" class="input-label">Название</label>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">person</span>
+                        <input type="text" id="author" name="author" class="form-input"
+                               placeholder="Автор" minlength="1" required aria-required="true">
+                        <label for="author" class="input-label">Автор</label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">calendar_today</span>
+                        <input type="date" id="year_of_publication" name="year_of_publication" class="form-input"
+                               placeholder="Дата издания" required aria-required="true">
+                        <label for="year_of_publication" class="input-label">Дата издания</label>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">flag</span>
+                        <input type="text" id="state_author" name="state_author" class="form-input"
+                               placeholder="Страна автора" required aria-required="true">
+                        <label for="state_author" class="input-label">Страна автора</label>
+                    </div>
+                </div>
+
+                <!-- Поле Издательство занимает всю ширину -->
+                <div class="form-row single-col">
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">business</span>
+                        <input type="text" id="publisher" name="publisher" class="form-input"
+                               placeholder="Издательство" required aria-required="true">
+                        <label for="publisher" class="input-label">Издательство</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <span class="material-icons btn-icon">add</span>
+                        Добавить книгу
+                    </button>
+                    <a href="/root/my_library" class="btn btn-outline btn-large">
+                        <span class="material-icons btn-icon">arrow_back</span>
+                        Назад в библиотеку
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог книг — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы со списком книг -->
+    <link rel="stylesheet" href="/static/books.css">
+</head>
+<body>
+    <main class="books-page" aria-labelledby="books-heading">
+        <div class="books-card">
+            <header class="books-header">
+                <h1 id="books-heading" class="books-title">Каталог книг</h1>
+                <div class="books-actions">
+                    <a href="/root/profile/add_book" class="btn btn-primary">
+                        <span class="material-icons btn-icon">add</span>
+                        Добавить книгу
+                    </a>
+                    <a href="/root/delete_book" class="btn btn-outline">
+                        <span class="material-icons btn-icon">delete</span>
+                        Удалить книгу
+                    </a>
+                </div>
+            </header>
+
+            {% if books %}
+            <div class="table-wrapper">
+                <table class="books-table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Автор</th>
+                            <th>Год публикации</th>
+                            <th>Страна автора</th>
+                            <th>Издательство</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>{{ book.name }}</td>
+                            <td>{{ book.author }}</td>
+                            <td>{{ book.year_of_publication }}</td>
+                            <td>{{ book.state_author }}</td>
+                            <td>{{ book.publisher }}</td>
+                            <td>
+                                <form action="/root/profile/all_books" method="post" class="add-form">
+                                    <input type="hidden" name="book_id" value="{{ book.id }}">
+                                    <button type="submit" class="btn-ripple btn-icon-only" aria-label="Добавить в мою библиотеку" title="Добавить в мою библиотеку">
+                                        <span class="material-icons">add</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span class="material-icons empty-icon">menu_book</span>
+                <p class="empty-text">В библиотеке пока нет книг</p>
+                <a href="/root/profile/add_book" class="btn btn-primary">Добавить первую книгу</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- Скрипт для ripple-эффекта -->
+    <script>
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn-ripple');
+            if (!btn) return;
+
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            btn.appendChild(ripple);
+
+            const rect = btn.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = size + 'px';
+
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+
+            ripple.addEventListener('animationend', () => {
+                ripple.remove();
+            });
+        });
+    </script>
+</body>
+</html>

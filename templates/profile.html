@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы профиля -->
+    <link rel="stylesheet" href="/static/profile.css">
+</head>
+<body>
+    <main class="profile-page" aria-labelledby="profile-heading">
+        <div class="profile-card">
+            <header class="profile-header">
+                <div class="profile-avatar" aria-hidden="true">
+                    <span class="material-icons avatar-icon">person</span>
+                </div>
+                <h1 id="profile-heading" class="profile-title">Профиль пользователя</h1>
+            </header>
+
+            <div class="profile-info">
+                <div class="info-row">
+                    <span class="info-label">Имя:</span>
+                    <span class="info-value">{{ name }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ email }}</span>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <a href="/root/my_library" class="btn btn-primary action-btn">
+                    <span class="material-icons btn-icon">menu_book</span>
+                    Моя библиотека
+                </a>
+                <a href="/root/profile/edit" class="btn btn-outline action-btn">
+                    <span class="material-icons btn-icon">edit</span>
+                    Редактировать
+                </a>
+                <a href="/root/logout" class="btn btn-outline action-btn logout-btn">
+                    <span class="material-icons btn-icon">logout</span>
+                    Выйти
+                </a>
+            </div>
+
+            <footer class="profile-footer">
+                <p>Дата регистрации: 15 марта 2025</p> <!-- Пример, можно заменить на переменную -->
+            </footer>
+        </div>
+    </main>
+</body>
+</html>

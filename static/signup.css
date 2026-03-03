@@ -1,0 +1,229 @@
+/* ========== signup.css — стили для страницы регистрации ========== */
+
+.signup-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 10% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 90% 70%, rgba(118, 75, 162, 0.15) 0%, transparent 30%),
+                linear-gradient(135deg, #f5f7fa 0%, #e9ecf5 100%);
+    padding: 20px;
+}
+
+.signup-card {
+    max-width: 460px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 48px;
+    padding: 48px 40px;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: transform 0.3s ease;
+    animation: fadeScale 0.6s ease-out;
+}
+
+@keyframes fadeScale {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.signup-title {
+    font-size: 2.2rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-dark);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+}
+
+.signup-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+
+/* Группа поля ввода с иконкой и плавающим лейблом */
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    font-size: 1.4rem;
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+.form-input {
+    width: 100%;
+    padding: 20px 20px 20px 60px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px solid transparent;
+    border-radius: 40px;
+    outline: none;
+    transition: all 0.3s;
+    color: var(--color-text-dark);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.form-input:focus {
+    background: white;
+    border-color: var(--color-primary);
+    box-shadow: 0 10px 25px -8px rgba(102, 126, 234, 0.3);
+}
+
+.form-input:focus + .input-label,
+.form-input:not(:placeholder-shown) + .input-label {
+    opacity: 1;
+    transform: translateY(-28px) scale(0.85);
+    color: var(--color-primary);
+}
+
+.input-label {
+    position: absolute;
+    left: 60px;
+    top: 20px;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    opacity: 0;
+    background: transparent;
+    padding: 0 4px;
+}
+
+/* Кнопка показа пароля */
+.password-toggle {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.password-toggle:hover {
+    color: var(--color-primary);
+}
+
+/* Чекбокс */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 24px 0 32px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-primary);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    font-size: 0.95rem;
+    color: var(--color-text-light);
+}
+
+.checkbox-group a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-medium);
+}
+
+.checkbox-group a:hover {
+    text-decoration: underline;
+}
+
+/* Кнопка отправки */
+.btn-block {
+    width: 100%;
+    padding: 18px 28px;
+    font-size: 1.1rem;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    border: none;
+    color: white;
+    font-weight: var(--font-weight-semibold);
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 15px 25px -8px rgba(102, 126, 234, 0.4);
+}
+
+.btn-block:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 30px -8px rgba(102, 126, 234, 0.6);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+    transition: transform 0.2s;
+}
+
+.btn-block:hover .btn-icon {
+    transform: translateX(4px);
+}
+
+/* Футер */
+.signup-footer {
+    text-align: center;
+    margin-top: 32px;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+
+.signup-footer a {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-semibold);
+    text-decoration: none;
+}
+
+.signup-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .signup-card {
+        padding: 36px 24px;
+        border-radius: 36px;
+    }
+    .signup-title {
+        font-size: 1.8rem;
+    }
+    .form-input {
+        padding: 18px 18px 18px 54px;
+    }
+    .input-icon {
+        left: 18px;
+        font-size: 1.2rem;
+    }
+    .input-label {
+        left: 54px;
+    }
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя библиотека — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы "Моя библиотека" -->
+    <link rel="stylesheet" href="/static/my_library.css">
+</head>
+<body>
+    <main class="my-library-page" aria-labelledby="library-heading">
+        <div class="library-card">
+            <header class="library-header">
+                <h1 id="library-heading" class="library-title">Моя библиотека</h1>
+                <a href="/root/profile/all_books" class="btn btn-primary">
+                    <span class="material-icons btn-icon">add</span>
+                    Добавить книгу
+                </a>
+            </header>
+            {% if books %}
+            <div class="books-grid">
+                {% for book in books %}
+                <article class="book-card">
+                    <div class="book-cover" aria-hidden="true">
+                        <span class="material-icons cover-icon">menu_book</span>
+                    </div>
+                    <div class="book-info">
+                        <h3 class="book-title">{{ book.name }}</h3>
+                        <p class="book-author">{{ book.author }}</p>
+                        <p class="book-year">{{ book.year_of_publication }}</p>
+                    </div>
+                    <div class="book-actions">
+                        <button class="btn-icon-only" aria-label="Редактировать">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn-icon-only" aria-label="Удалить">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span class="material-icons empty-icon">library_books</span>
+                <p class="empty-text">В вашей библиотеке пока нет книг</p>
+                <a href="/root/profile/all_books" class="btn btn-primary">Добавить первую книгу</a>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

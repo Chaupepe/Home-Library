@@ -1,0 +1,219 @@
+/* ========== books.css — стили для страницы со списком книг ========== */
+/* Добавлены стили для кнопки с ripple-эффектом */
+
+.books-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: radial-gradient(circle at 10% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 90% 70%, rgba(118, 75, 162, 0.15) 0%, transparent 30%),
+                linear-gradient(135deg, #f5f7fa 0%, #e9ecf5 100%);
+    padding: 40px 20px;
+}
+
+.books-card {
+    max-width: 1300px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-radius: 48px;
+    padding: 48px 40px;
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+    transition: transform 0.3s ease;
+    animation: fadeScale 0.6s ease-out;
+}
+
+@keyframes fadeScale {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.books-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.books-title {
+    font-size: 2.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-dark);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.books-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-icon {
+    font-size: 1.3rem;
+}
+
+/* Обёртка для таблицы (горизонтальный скролл на мобильных) */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.5);
+    padding: 4px;
+}
+
+.books-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    min-width: 900px;
+}
+
+.books-table th {
+    text-align: left;
+    padding: var(--space-4) var(--space-3);
+    background: rgba(102, 126, 234, 0.1);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-dark);
+    border-bottom: 2px solid var(--color-primary-light);
+}
+
+.books-table td {
+    padding: var(--space-4) var(--space-3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: var(--color-text-light);
+    vertical-align: middle;
+}
+
+.books-table tbody tr {
+    transition: background 0.2s;
+}
+
+.books-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.books-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Форма и кнопка-иконка */
+.add-form {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+/* Базовая кнопка-иконка (без ripple) */
+.btn-icon-only {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-icon-only:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-icon-only .material-icons {
+    font-size: 1.3rem;
+}
+
+/* Кнопка с ripple-эффектом (наследует от .btn-icon-only) */
+.btn-ripple {
+    composes: btn-icon-only; /* если используется postcss, но для простоты просто дублируем свойства */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Стили для ripple-элемента */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(0);
+    animation: ripple-animation 0.5s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: var(--space-16) var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.empty-icon {
+    font-size: 6rem;
+    color: var(--color-text-muted);
+    opacity: 0.5;
+}
+
+.empty-text {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+}
+
+/* Адаптивность */
+@media (max-width: 700px) {
+    .books-card {
+        padding: 36px 28px;
+    }
+    .books-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .books-title {
+        font-size: 2rem;
+    }
+    .books-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    .books-actions .btn {
+        flex: 1;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .books-card {
+        padding: 28px 20px;
+        border-radius: 36px;
+    }
+    .books-title {
+        font-size: 1.8rem;
+    }
+    .empty-icon {
+        font-size: 4rem;
+    }
+}

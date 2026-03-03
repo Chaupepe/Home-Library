@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons (для иконок) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили (переменные, утилиты, кнопки) -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы регистрации -->
+    <link rel="stylesheet" href="/static/signup.css">
+</head>
+<body>
+    <main class="signup-page">
+        <div class="signup-card">
+            <div class="signup-header">
+                <h1 class="signup-title">Создать аккаунт</h1>
+                <p class="signup-subtitle">Присоединяйтесь к тысячам читателей</p>
+            </div>
+
+            <form class="signup-form" method="post" action="/root/sign_up">
+                <!-- CSRF токен (если нужно) -->
+                <!-- <input type="hidden" name="csrf_token" value="..."> -->
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">person</span>
+                    <input type="text" id="name" name="name"
+                           class="form-input"
+                           placeholder="Имя"
+                           minlength="2" maxlength="50"
+                           required autocomplete="name">
+                    <label for="name" class="input-label">Имя</label>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">email</span>
+                    <input type="email" id="email" name="email"
+                           class="form-input"
+                           placeholder="Email"
+                           required autocomplete="email">
+                    <label for="email" class="input-label">Email</label>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon">lock</span>
+                    <input type="password" id="password" name="password"
+                           class="form-input"
+                           placeholder="Пароль"
+                           minlength="8" maxlength="50"
+                           required autocomplete="new-password">
+                    <label for="password" class="input-label">Пароль</label>
+                    <button type="button" class="password-toggle" aria-label="Показать пароль">
+                        <span class="material-icons">visibility_off</span>
+                    </button>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">Я принимаю <a href="#">условия использования</a></label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Зарегистрироваться
+                    <span class="material-icons btn-icon">arrow_forward</span>
+                </button>
+            </form>
+
+            <div class="signup-footer">
+                <p>Уже есть аккаунт? <a href="/root/authorization">Войти</a></p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Небольшой скрипт для показа пароля (можно добавить) -->
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const icon = this.querySelector('.material-icons');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

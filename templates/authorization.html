@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы входа -->
+    <link rel="stylesheet" href="/static/auth.css">
+</head>
+<body>
+    <main class="auth-page" aria-labelledby="auth-heading">
+        <div class="auth-card">
+            <header class="auth-header">
+                <h1 id="auth-heading" class="auth-title">Добро пожаловать!</h1>
+                <p class="auth-subtitle">Войдите в свой аккаунт</p>
+            </header>
+
+            <form class="auth-form" method="post" action="/root/authorization" aria-label="Форма входа">
+                <!-- CSRF токен (если нужен) -->
+                <!-- <input type="hidden" name="csrf_token" value="..."> -->
+
+                <div class="input-group">
+                    <span class="material-icons input-icon" aria-hidden="true">email</span>
+                    <input type="email" id="email" name="email" class="form-input"
+                           placeholder="Email" required autocomplete="email" aria-required="true">
+                    <label for="email" class="input-label">Email</label>
+                </div>
+
+                <div class="input-group">
+                    <span class="material-icons input-icon" aria-hidden="true">lock</span>
+                    <input type="password" id="password" name="password" class="form-input"
+                           placeholder="Пароль" minlength="8" maxlength="50"
+                           required autocomplete="current-password" aria-required="true">
+                    <label for="password" class="input-label">Пароль</label>
+                    <button type="button" class="password-toggle"
+                            aria-label="Показать пароль" title="Показать пароль">
+                        <span class="material-icons" aria-hidden="true">visibility_off</span>
+                    </button>
+                </div>
+
+                <div class="auth-options">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="remember" name="remember" class="form-check-input">
+                        <label for="remember" class="form-check-label">Запомнить меня</label>
+                    </div>
+                    <a href="/root/forgot-password" class="forgot-link">Забыли пароль?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    Войти
+                    <span class="material-icons btn-icon" aria-hidden="true">arrow_forward</span>
+                </button>
+            </form>
+
+            <footer class="auth-footer">
+                <p>Нет аккаунта? <a href="/root/sign_up">Зарегистрироваться</a></p>
+            </footer>
+        </div>
+    </main>
+
+    <!-- Скрипт для показа пароля -->
+    <script>
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.previousElementSibling;
+                const icon = this.querySelector('.material-icons');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
