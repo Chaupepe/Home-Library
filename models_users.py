@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Table, ForeignKey, BLOB
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -27,5 +27,5 @@ class Users(Base):
     name = Column(String, index=True, nullable=False)
     email = Column(String, unique = True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-
+    avatar = Column(BLOB, default=None)
     books = relationship("Books", secondary = "user_book_association", back_populates="users")

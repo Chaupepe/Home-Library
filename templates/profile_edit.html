@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование профиля — Bookshop</title>
+    <!-- Google Fonts Inter + Material Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="/static/base.css">
+    <link rel="stylesheet" href="/static/components.css">
+    <!-- Стили для страницы редактирования профиля -->
+    <link rel="stylesheet" href="/static/profile_edit.css">
+</head>
+<body>
+    <main class="edit-profile-page" aria-labelledby="edit-profile-heading">
+        <div class="edit-profile-card">
+            <header class="edit-profile-header">
+                <h1 id="edit-profile-heading" class="edit-profile-title">Редактирование профиля</h1>
+                <p class="edit-profile-subtitle">Обновите свои данные</p>
+            </header>
+
+            <form class="edit-profile-form" method="post" action="/root/profile/edit" enctype="multipart/form-data" aria-label="Форма редактирования профиля">
+                <!-- CSRF токен (если нужен) -->
+                <!-- <input type="hidden" name="csrf_token" value="..."> -->
+
+                <!-- Секция аватара -->
+                <div class="form-section">
+                    <h2 class="section-title">Фото профиля</h2>
+                    <div class="avatar-upload">
+                        <div class="avatar-preview" id="avatarPreview">
+                            <span class="material-icons">person</span>
+                        </div>
+                        <div class="avatar-controls">
+                            <label for="avatar" class="btn btn-outline btn-small">
+                                <span class="material-icons btn-icon">upload</span>
+                                Загрузить фото
+                            </label>
+                            <input type="file" id="avatar" name="avatar" accept="image/*" class="hidden-input">
+                            <button type="button" class="btn btn-outline btn-small" id="removeAvatar">
+                                <span class="material-icons btn-icon">delete</span>
+                                Удалить
+                            </button>
+                            <p class="input-hint">Рекомендуемый размер: 200x200px</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Основная информация -->
+                <div class="form-section">
+                    <h2 class="section-title">Основная информация</h2>
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">person</span>
+                        <input type="text" id="name" name="name" class="form-input"
+                               placeholder="Имя" value="{{ user.name }}" required aria-required="true">
+                        <label for="name" class="input-label">Имя</label>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">email</span>
+                        <input type="email" id="email" name="email" class="form-input"
+                               placeholder="Email" value="{{ user.email }}" required aria-required="true">
+                        <label for="email" class="input-label">Email</label>
+                    </div>
+                </div>
+
+                <!-- Смена пароля (опционально) -->
+                <div class="form-section">
+                    <h2 class="section-title">Смена пароля</h2>
+                    <p class="section-hint">Оставьте поля пустыми, если не хотите менять пароль</p>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">lock</span>
+                        <input type="password" id="current_password" name="password" class="form-input"
+                               placeholder="Текущий пароль" autocomplete="current-password">
+                        <label for="current_password" class="input-label">Текущий пароль</label>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">lock</span>
+                        <input type="password" id="new_password" name="new_password_1" class="form-input"
+                               placeholder="Новый пароль" minlength="8" autocomplete="new-password">
+                        <label for="new_password" class="input-label">Новый пароль</label>
+                        <button type="button" class="password-toggle" aria-label="Показать пароль">
+                            <span class="material-icons">visibility_off</span>
+                        </button>
+                    </div>
+
+                    <div class="input-group">
+                        <span class="material-icons input-icon" aria-hidden="true">lock</span>
+                        <input type="password" id="confirm_password" name="new_password_2" class="form-input"
+                               placeholder="Подтвердите новый пароль" minlength="8" autocomplete="new-password">
+                        <label for="confirm_password" class="input-label">Подтвердите пароль</label>
+                        <button type="button" class="password-toggle" aria-label="Показать пароль">
+                            <span class="material-icons">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <span class="material-icons btn-icon">save</span>
+                        Сохранить изменения
+                    </button>
+                    <a href="/root/profile" class="btn btn-outline btn-large">
+                        <span class="material-icons btn-icon">close</span>
+                        Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Предпросмотр аватара
+        const avatarInput = document.getElementById('avatar');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const removeBtn = document.getElementById('removeAvatar');
+
+        avatarInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar preview" class="preview-img">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeBtn.addEventListener('click', function() {
+            avatarInput.value = '';
+            avatarPreview.innerHTML = '<span class="material-icons">person</span>';
+        });
+
+        // Показать/скрыть пароль
+        document.querySelectorAll('.password-toggle').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.closest('.input-group').querySelector('input');
+                const icon = this.querySelector('.material-icons');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    icon.textContent = 'visibility_off';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

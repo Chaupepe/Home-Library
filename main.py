@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Form , Depends, HTTPException, Response, status
+from fastapi import FastAPI, Request, Form , Depends, HTTPException, status, UploadFile, File, Response
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,12 +10,13 @@ from passlib.context import CryptContext
 from jwt_tokens import create_access_token, verify_token, decode_access_token
 from schemas import TokenData
 from datetime import date
+from typing import Optional
 
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
-
+MAX_CONTENT_LENGTH = 1024 * 1024
 
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -50,7 +51,8 @@ async def my_library(request: Request, db: Session = Depends(get_db)):
     if not verify_token(token, credentials_exception):
         raise HTTPException(status_code=404, detail="Token is invalid")
 
-    books = db.query(Books).filter(Books.users.any()).all()
+    user = db.query(Users).filter(Users.email == decode_access_token(token).get("sub")).first()
+    books = user.books
     return templates.TemplateResponse("my_library.html", {"request": request, "books": books})
 
 
@@ -103,7 +105,7 @@ async def log_in(
     token = create_access_token(TokenData(email=user.email))
     resp = templates.TemplateResponse(
         "profile.html",
-        {"request": request, "name": user.name, "email": user.email}
+        {"request": request, "user" : user}
     )
     resp.set_cookie(
         key="token",
@@ -127,10 +129,29 @@ async def profile(
         raise HTTPException(status_code=404, detail="Token is missing")
     if not verify_token(token, credentials_exception):
         raise HTTPException(status_code=404, detail="Token is invalid")
-    user = db.query(Users).filter(Users.email == token.decode("sub")).first()
+    user = db.query(Users).filter(Users.email == decode_access_token(token).get("sub")).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return  templates.TemplateResponse("profile.html", {"request": request,"name" : user.name, "email" : user.email})
+    return  templates.TemplateResponse("profile.html", {"request": request, "user" : user})
+
+
+@app.get("/root/profile/avatar")
+async def get_avatar(
+    request: Request,
+    db: Session = Depends(get_db),
+):
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=404, detail="Token is missing")
+    if not verify_token(token, credentials_exception):
+        raise HTTPException(status_code=404, detail="Token is invalid")
+    payload = decode_access_token(token)
+    user = db.query(Users).filter(Users.email == payload["sub"]).first()
+
+    if not user:
+        # Если аватар отсутствует, можно вернуть 404 или стандартное изображение
+        raise HTTPException(status_code=404, detail="Avatar not found")
+    return Response(content=user.avatar, media_type="image/jpeg")
 
 
 @app.post("/root/profile/add_book")
@@ -162,7 +183,7 @@ def add_book(
 
 
 @app.get("/root/profile/add_book")
-async def add_book(request: Request):
+async def add_books(request: Request):
     token = request.cookies.get("token")
     if not token:
         raise HTTPException(status_code=404, detail="Token is missing")
@@ -208,4 +229,53 @@ async def add_book_to_user(
     user.books.append(book)
     db.commit()
     return templates.TemplateResponse("all_books.html", {"request": request})
+
+
+@app.get("/root/profile/edit", response_class=HTMLResponse)
+async  def edit_page( request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=404, detail="Token is missing")
+    if not verify_token(token, credentials_exception):
+        raise HTTPException(status_code=404, detail="Token is invalid")
+    payload = decode_access_token(token)
+    user = db.query(Users).filter(Users.email == payload["sub"]).first()
+    return templates.TemplateResponse("profile_edit.html", {"request": request, "user": user})
+
+
+@app.post("/root/profile/edit")
+async def edit_profile(
+        request: Request,
+        db: Session = Depends(get_db),
+        name: str = Form(...),
+        email: str = Form(...),
+        password: Optional[str] = Form(None),
+        new_password_1: Optional[str] = Form(None),
+        new_password_2: Optional[str] = Form(None),
+        avatar: UploadFile = File(None)
+):
+    token = request.cookies.get("token")
+    if not token:
+        raise HTTPException(status_code=404, detail="Token is missing")
+    if not verify_token(token, credentials_exception):
+        raise HTTPException(status_code=404, detail="Token is invalid")
+
+    payload = decode_access_token(token)
+    user = db.query(Users).filter(Users.email == payload["sub"]).first()
+    user.name = name
+    user.email = email
+    if password or new_password_1 or new_password_2:
+        if not (password and new_password_1 and new_password_2):
+            raise HTTPException(status_code=400, detail="All password fields are required to change password")
+        if not verify_password(password, user.hashed_password):
+            raise HTTPException(status_code=400, detail="Invalid password")
+        if new_password_1 != new_password_2:
+            raise HTTPException(status_code=400, detail="New password does not match")
+        user.hashed_password = hash_password(new_password_1)
+    if avatar:
+        avatar_bytes = await avatar.read()
+        user.avatar = avatar_bytes
+
+    db.commit()
+    return templates.TemplateResponse("profile.html", {"request": request, "user" : user})
 

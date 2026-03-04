@@ -20,7 +20,11 @@
         <div class="profile-card">
             <header class="profile-header">
                 <div class="profile-avatar" aria-hidden="true">
-                    <span class="material-icons avatar-icon">person</span>
+                    {% if user.avatar %}
+                        <img src="/root/profile/avatar" alt="Аватар" class="avatar-img">
+                    {% else %}
+                        <span class="material-icons avatar-icon">person</span>
+                    {% endif %}
                 </div>
                 <h1 id="profile-heading" class="profile-title">Профиль пользователя</h1>
             </header>
@@ -28,11 +32,11 @@
             <div class="profile-info">
                 <div class="info-row">
                     <span class="info-label">Имя:</span>
-                    <span class="info-value">{{ name }}</span>
+                    <span class="info-value">{{ user.name }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Email:</span>
-                    <span class="info-value">{{ email }}</span>
+                    <span class="info-value">{{ user.email }}</span>
                 </div>
             </div>
 
@@ -45,15 +49,11 @@
                     <span class="material-icons btn-icon">edit</span>
                     Редактировать
                 </a>
-                <a href="/root/logout" class="btn btn-outline action-btn logout-btn">
+                <a href="/" class="btn btn-outline action-btn logout-btn">
                     <span class="material-icons btn-icon">logout</span>
                     Выйти
                 </a>
             </div>
-
-            <footer class="profile-footer">
-                <p>Дата регистрации: 15 марта 2025</p> <!-- Пример, можно заменить на переменную -->
-            </footer>
         </div>
     </main>
 </body>

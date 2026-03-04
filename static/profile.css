@@ -163,3 +163,10 @@
         font-size: 1rem;
     }
 }
+.avatar-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
