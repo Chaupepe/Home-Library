@@ -19,15 +19,15 @@
     <main class="books-page" aria-labelledby="books-heading">
         <div class="books-card">
             <header class="books-header">
+                <!-- Кнопка возврата в библиотеку -->
+                <a href="/root/my_library" class="btn-icon-only" aria-label="Вернуться в библиотеку">
+                    <span class="material-icons">arrow_back</span>
+                </a>
                 <h1 id="books-heading" class="books-title">Каталог книг</h1>
                 <div class="books-actions">
                     <a href="/root/profile/add_book" class="btn btn-primary">
                         <span class="material-icons btn-icon">add</span>
                         Добавить книгу
-                    </a>
-                    <a href="/root/delete_book" class="btn btn-outline">
-                        <span class="material-icons btn-icon">delete</span>
-                        Удалить книгу
                     </a>
                 </div>
             </header>
@@ -99,6 +99,59 @@
                 ripple.remove();
             });
         });
+    </script>
+    <!-- Скрипт для отправки формы добавления книги через JSON -->
+    <script>
+        (function() {
+            // Находим все формы добавления книги (с классом add-form)
+            const forms = document.querySelectorAll('.add-form');
+            if (!forms.length) return;
+
+            forms.forEach(form => {
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault(); // отменяем стандартную отправку
+
+                    // Получаем book_id из скрытого поля
+                    const bookIdInput = form.querySelector('input[name="book_id"]');
+                    if (!bookIdInput) return;
+
+                    const data = {
+                        book_id: bookIdInput.value
+                    };
+
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+
+                        if (response.ok) {
+                            // Успешно добавили – перезагружаем страницу, чтобы обновить список
+                            // (или можно перенаправить на страницу библиотеки)
+                            window.location.reload();
+                        } else {
+                            // Обрабатываем ошибки
+                            const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
+                            let errorMessage = 'Не удалось добавить книгу. ';
+                            if (errorData.detail) {
+                                if (Array.isArray(errorData.detail)) {
+                                    errorMessage += errorData.detail.map(err => err.msg).join('; ');
+                                } else if (typeof errorData.detail === 'string') {
+                                    errorMessage += errorData.detail;
+                                }
+                            }
+                            alert(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('Ошибка сети:', error);
+                        alert('Не удалось отправить запрос. Проверьте соединение.');
+                    }
+                });
+            });
+        })();
     </script>
 </body>
 </html>

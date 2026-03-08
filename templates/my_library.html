@@ -19,12 +19,16 @@
     <main class="my-library-page" aria-labelledby="library-heading">
         <div class="library-card">
             <header class="library-header">
+                <a href="/root/profile" class="btn-back" aria-label="Назад в профиль">
+                    <span class="material-icons">arrow_back</span>
+                </a>
                 <h1 id="library-heading" class="library-title">Моя библиотека</h1>
                 <a href="/root/profile/all_books" class="btn btn-primary">
                     <span class="material-icons btn-icon">add</span>
                     Добавить книгу
                 </a>
             </header>
+
             {% if books %}
             <div class="books-grid">
                 {% for book in books %}
@@ -38,12 +42,12 @@
                         <p class="book-year">{{ book.year_of_publication }}</p>
                     </div>
                     <div class="book-actions">
-                        <button class="btn-icon-only" aria-label="Редактировать">
-                            <span class="material-icons">edit</span>
-                        </button>
-                        <button class="btn-icon-only" aria-label="Удалить">
-                            <span class="material-icons">delete</span>
-                        </button>
+                        <form action="/root/my_library" method="post" class="add-form">
+                            <input type="hidden" name="book_id" value="{{ book.id }}">
+                            <button class="btn-icon-only" aria-label="Удалить">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </form>
                     </div>
                 </article>
                 {% endfor %}

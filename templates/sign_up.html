@@ -91,6 +91,62 @@
                 }
             });
         });
+
     </script>
+    <script>
+    (function() {
+        const form = document.querySelector('.signup-form'); // правильный класс
+        if (!form) return;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // отменяем стандартную отправку
+
+            // Собираем данные
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                terms: formData.has('terms') && formData.get('terms') === 'on' // true/false
+            };
+
+            try {
+                const response = await fetch('/root/sign_up', { // правильный URL
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Успешная регистрация – перенаправляем на страницу входа (или куда нужно)
+                    const result = await response.json().catch(() => ({}));
+                    if (result.redirect_url) {
+                        window.location.href = result.redirect_url;
+                    } else {
+                        // По умолчанию – на страницу входа
+                        window.location.href = '/root/authorization';
+                    }
+                } else {
+                    // Обрабатываем ошибки от сервера
+                    const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
+                    let errorMessage = 'Ошибка регистрации. ';
+                    if (errorData.detail) {
+                        if (Array.isArray(errorData.detail)) {
+                            errorMessage += errorData.detail.map(err => err.msg).join('; ');
+                        } else if (typeof errorData.detail === 'string') {
+                            errorMessage += errorData.detail;
+                        }
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Ошибка сети:', error);
+                alert('Не удалось отправить запрос. Проверьте соединение.');
+            }
+        });
+    })();
+</script>
 </body>
 </html>

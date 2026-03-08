@@ -1,5 +1,5 @@
 /* ========== books.css — стили для страницы со списком книг ========== */
-/* Добавлены стили для кнопки с ripple-эффектом */
+/* Добавлены стили для кнопки возврата и центрирования заголовка */
 
 .books-page {
     min-height: 100vh;
@@ -46,6 +46,8 @@
     color: var(--color-text-dark);
     letter-spacing: -0.02em;
     margin: 0;
+    flex: 1;                  /* Занимает всё доступное пространство */
+    text-align: center;       /* Заголовок по центру */
 }
 
 .books-actions {
@@ -56,6 +58,33 @@
 
 .btn-icon {
     font-size: 1.3rem;
+}
+
+/* Кнопка-иконка (общая для действий и возврата) */
+.btn-icon-only {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(4px);
+    border: none;
+    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.btn-icon-only:hover {
+    background: var(--color-primary);
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-icon-only .material-icons {
+    font-size: 1.8rem;
 }
 
 /* Обёртка для таблицы (горизонтальный скролл на мобильных) */
@@ -101,47 +130,18 @@
     border-bottom: none;
 }
 
-/* Форма и кнопка-иконка */
+/* Форма и кнопка с ripple (внутри таблицы) */
 .add-form {
     margin: 0;
     padding: 0;
     display: inline-block;
 }
 
-/* Базовая кнопка-иконка (без ripple) */
-.btn-icon-only {
-    background: transparent;
-    border: none;
-    cursor: pointer;
+.btn-ripple {
+    position: relative;
+    overflow: hidden;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--color-text-muted);
-    transition: all 0.2s;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(4px);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-icon-only:hover {
-    background: var(--color-primary);
-    color: white;
-    transform: scale(1.1);
-}
-
-.btn-icon-only .material-icons {
-    font-size: 1.3rem;
-}
-
-/* Кнопка с ripple-эффектом (наследует от .btn-icon-only) */
-.btn-ripple {
-    composes: btn-icon-only; /* если используется postcss, но для простоты просто дублируем свойства */
-    position: relative;
-    overflow: hidden;
 }
 
 /* Стили для ripple-элемента */
@@ -191,17 +191,27 @@
     .books-header {
         flex-direction: column;
         align-items: flex-start;
+        gap: 15px;
     }
     .books-title {
         font-size: 2rem;
+        text-align: left;   /* На мобильных заголовок прижимаем влево */
+        flex: none;
+        width: 100%;
+        order: 1;
     }
     .books-actions {
         width: 100%;
         justify-content: stretch;
+        order: 2;
     }
     .books-actions .btn {
         flex: 1;
         text-align: center;
+    }
+    .btn-icon-only {
+        order: 0;            /* Кнопка назад остаётся сверху */
+        margin-bottom: 5px;
     }
 }
 
@@ -215,5 +225,12 @@
     }
     .empty-icon {
         font-size: 4rem;
+    }
+    .btn-icon-only {
+        width: 40px;
+        height: 40px;
+    }
+    .btn-icon-only .material-icons {
+        font-size: 1.5rem;
     }
 }

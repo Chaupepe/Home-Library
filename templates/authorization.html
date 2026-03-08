@@ -84,5 +84,67 @@
         });
     });
 </script>
+<script>
+    (function() {
+        const form = document.querySelector('.auth-form');
+        if (!form) return;
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Отменяем стандартную отправку
+
+            // Собираем данные формы
+            const formData = new FormData(form);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                remember: formData.has('remember') && formData.get('remember') === 'on' // true/false
+            };
+
+            // Если используется CSRF токен (раскомментируйте и добавьте поле в форму)
+            // const csrfToken = formData.get('csrf_token');
+            // if (csrfToken) data.csrf_token = csrfToken;
+
+            try {
+                const response = await fetch('/root/authorization', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Если нужен CSRF, добавьте соответствующий заголовок
+                        // 'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    // Успешный вход – выполняем редирект (обычно сервер возвращает URL или куки)
+                    // Можно либо перейти по заголовку Location, либо на главную
+                    const result = await response.json().catch(() => ({}));
+                    if (result.redirect_url) {
+                        window.location.href = result.redirect_url;
+                    } else {
+                        // Перенаправление на главную (или другую страницу по умолчанию)
+                        window.location.href = '/';
+                    }
+                } else {
+                    // Обработка ошибок (статус 4xx, 5xx)
+                    const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
+                    let errorMessage = 'Ошибка входа. ';
+                    if (errorData.detail) {
+                        if (Array.isArray(errorData.detail)) {
+                            errorMessage += errorData.detail.map(err => err.msg).join('; ');
+                        } else if (typeof errorData.detail === 'string') {
+                            errorMessage += errorData.detail;
+                        }
+                    }
+                    alert(errorMessage);
+                }
+            } catch (error) {
+                console.error('Ошибка сети:', error);
+                alert('Не удалось отправить запрос. Проверьте соединение.');
+            }
+        });
+    })();
+</script>
+
 </body>
 </html>

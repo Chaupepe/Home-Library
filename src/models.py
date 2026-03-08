@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Date, Table, ForeignKey, BLOB
 from sqlalchemy.orm import relationship
-from database import Base
+from src.database import Base
 
 user_book_association = Table(
     "user_book_association",

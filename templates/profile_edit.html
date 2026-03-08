@@ -26,13 +26,19 @@
             <form class="edit-profile-form" method="post" action="/root/profile/edit" enctype="multipart/form-data" aria-label="Форма редактирования профиля">
                 <!-- CSRF токен (если нужен) -->
                 <!-- <input type="hidden" name="csrf_token" value="..."> -->
+                <!-- Поле delete, которое требует сервер -->
+                <input type="hidden" name="delete" value="false">
 
                 <!-- Секция аватара -->
                 <div class="form-section">
                     <h2 class="section-title">Фото профиля</h2>
                     <div class="avatar-upload">
-                        <div class="avatar-preview" id="avatarPreview">
-                            <span class="material-icons">person</span>
+                        <div class="profile-avatar" id="avatarPreview" aria-hidden="true">
+                            {% if user.avatar %}
+                                <img src="/root/profile/avatar" alt="Аватар" class="avatar-img">
+                            {% else %}
+                                <span class="material-icons">person</span>
+                            {% endif %}
                         </div>
                         <div class="avatar-controls">
                             <label for="avatar" class="btn btn-outline btn-small">
@@ -121,21 +127,25 @@
         const avatarPreview = document.getElementById('avatarPreview');
         const removeBtn = document.getElementById('removeAvatar');
 
-        avatarInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar preview" class="preview-img">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        if (avatarInput && avatarPreview) {
+            avatarInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar preview" class="preview-img">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
 
-        removeBtn.addEventListener('click', function() {
-            avatarInput.value = '';
-            avatarPreview.innerHTML = '<span class="material-icons">person</span>';
-        });
+        if (removeBtn && avatarPreview && avatarInput) {
+            removeBtn.addEventListener('click', function() {
+                avatarInput.value = '';
+                avatarPreview.innerHTML = '<span class="material-icons">person</span>';
+            });
+        }
 
         // Показать/скрыть пароль
         document.querySelectorAll('.password-toggle').forEach(btn => {

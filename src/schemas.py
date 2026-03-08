@@ -6,21 +6,21 @@ from datetime import date
 class UserBase(BaseModel):
     name: str
     email: EmailStr
+
+
+class UserLogin(UserBase):
+    pass
+
+
+class UserCreate(UserBase):
     password: str
 
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
 
-
-class User(UserBase):
+class User(UserCreate):
     id: int
-
     class Config:
         from_attributes = True
 
-class UserCreate(UserBase):
-    pass
 
 class Token(BaseModel):
     access_token: str
@@ -29,12 +29,19 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     email: str = None
 
-class Books(BaseModel):
-    id: int
+
+class BooksBase(BaseModel):
     name: str
     publisher: str
     author: str
     year_of_publication: date
+    state_author: str
+
+
+class CreateBooks(BooksBase):
+    id: int
+
+class Books(CreateBooks):
     class Config:
         from_attributes = True
 

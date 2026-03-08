@@ -1,9 +1,11 @@
 
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from schemas import TokenData
+from src.schemas import TokenData
 from dotenv import load_dotenv
 import os
+
+from src.templates import pwd_context
 
 load_dotenv()
 
@@ -35,3 +37,13 @@ def verify_token(token: str, credentials_exception):
 
 def decode_access_token(token: str):
     return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+
+
+def hash_password(password: str) -> str:
+    """Хэширует пароль"""
+    return pwd_context.hash(password)
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Проверяет пароль"""
+    return pwd_context.verify(plain_password, hashed_password)
+
