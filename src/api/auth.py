@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Request, Depends, HTTPException, Form
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from sqlalchemy.orm import Session
 
@@ -21,7 +21,7 @@ async def root(request: Request):
     return templates.TemplateResponse("root.html", context)
 
 
-@router.get("/root/sign_up", response_class=HTMLResponse)
+@router.get("/auth/register", response_class=HTMLResponse)
 async def signup(request: Request):
     context = {
         "request": request
@@ -29,14 +29,21 @@ async def signup(request: Request):
     return templates.TemplateResponse("sign_up.html", context)
 
 
-@router.post("/root/sign_up", response_class=HTMLResponse)
+@router.post("/auth/register", response_class=HTMLResponse)
 async def create_user(
         request: Request,
         user_data : UserCreate,
         db: Session = Depends(get_db),
 ):
+    existing_user = db.query(Users).filter(Users.email == user_data.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
 
-    db_user = Users(name=user_data.name, email=user_data.email, hashed_password= hash_password(user_data.password))
+    db_user = Users(
+        name=user_data.name,
+        email=user_data.email,
+        hashed_password= hash_password(user_data.password)
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -44,7 +51,7 @@ async def create_user(
     return  templates.TemplateResponse("authorization.html", {"request": request})
 
 
-@router.get("/root/authorization", response_class=HTMLResponse)
+@router.get("/auth/login", response_class=HTMLResponse)
 async def authorization(request: Request):
     context = {
         "request": request
@@ -52,7 +59,7 @@ async def authorization(request: Request):
     return templates.TemplateResponse("authorization.html", context)
 
 
-@router.post("/root/authorization",)
+@router.post("/auth/login",)
 async def log_in(
         request: Request,
         user_data : UserLogin,
@@ -66,10 +73,7 @@ async def log_in(
     if  not verify_password(user_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Password mismatch")
     token = create_access_token(TokenData(email=user.email))
-    resp = templates.TemplateResponse(
-        "profile.html",
-        {"request": request, "user" : user}
-    )
+    resp = JSONResponse(content={"ok": True})
     resp.set_cookie(
         key="token",
         value=token,
@@ -80,3 +84,10 @@ async def log_in(
         path="/",
     )
     return  resp
+
+
+@router.get("/auth/logout")
+async def logout():
+    response = RedirectResponse(url="/", status_code=302)
+    response.delete_cookie("token")
+    return response

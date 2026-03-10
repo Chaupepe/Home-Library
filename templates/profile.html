@@ -21,7 +21,7 @@
             <header class="profile-header">
                 <div class="profile-avatar" aria-hidden="true">
                     {% if user.avatar %}
-                        <img src="/root/profile/avatar" alt="Аватар" class="avatar-img">
+                        <img src="/profile/avatar" alt="Аватар" class="avatar-img">
                     {% else %}
                         <span class="material-icons avatar-icon">person</span>
                     {% endif %}
@@ -41,15 +41,15 @@
             </div>
 
             <div class="profile-actions">
-                <a href="/root/my_library" class="btn btn-primary action-btn">
+                <a href="/profile/books" class="btn btn-primary action-btn">
                     <span class="material-icons btn-icon">menu_book</span>
                     Моя библиотека
                 </a>
-                <a href="/root/profile/edit" class="btn btn-outline action-btn">
+                <a href="/profile/edit" class="btn btn-outline action-btn">
                     <span class="material-icons btn-icon">edit</span>
                     Редактировать
                 </a>
-                <a href="/" class="btn btn-outline action-btn logout-btn">
+                <a href="/auth/logout" class="btn btn-outline action-btn logout-btn">
                     <span class="material-icons btn-icon">logout</span>
                     Выйти
                 </a>

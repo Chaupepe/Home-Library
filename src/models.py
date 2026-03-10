@@ -13,7 +13,7 @@ class Books(Base):
     __tablename__ = 'books'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
-    author = Column(String, unique = True, index=True, nullable=False)
+    author = Column(String, unique = False, index=True, nullable=False)
     year_of_publication = Column(Date, nullable=False)
     state_author = Column(String, nullable=False)
     publisher = Column(String, nullable=False)

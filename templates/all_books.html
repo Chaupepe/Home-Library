@@ -4,28 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог книг — Bookshop</title>
-    <!-- Google Fonts Inter + Material Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Общие стили -->
     <link rel="stylesheet" href="/static/base.css">
     <link rel="stylesheet" href="/static/components.css">
-    <!-- Стили для страницы со списком книг -->
     <link rel="stylesheet" href="/static/books.css">
 </head>
 <body>
     <main class="books-page" aria-labelledby="books-heading">
         <div class="books-card">
             <header class="books-header">
-                <!-- Кнопка возврата в библиотеку -->
-                <a href="/root/my_library" class="btn-icon-only" aria-label="Вернуться в библиотеку">
+                <a href="/profile/books" class="btn-icon-only" aria-label="Вернуться в библиотеку">
                     <span class="material-icons">arrow_back</span>
                 </a>
                 <h1 id="books-heading" class="books-title">Каталог книг</h1>
                 <div class="books-actions">
-                    <a href="/root/profile/add_book" class="btn btn-primary">
+                    <a href="/books/add" class="btn btn-primary">
                         <span class="material-icons btn-icon">add</span>
                         Добавить книгу
                     </a>
@@ -54,7 +50,7 @@
                             <td>{{ book.state_author }}</td>
                             <td>{{ book.publisher }}</td>
                             <td>
-                                <form action="/root/profile/all_books" method="post" class="add-form">
+                                <form action="/books/my" method="post" class="add-form">
                                     <input type="hidden" name="book_id" value="{{ book.id }}">
                                     <button type="submit" class="btn-ripple btn-icon-only" aria-label="Добавить в мою библиотеку" title="Добавить в мою библиотеку">
                                         <span class="material-icons">add</span>
@@ -70,57 +66,47 @@
             <div class="empty-state">
                 <span class="material-icons empty-icon">menu_book</span>
                 <p class="empty-text">В библиотеке пока нет книг</p>
-                <a href="/root/profile/add_book" class="btn btn-primary">Добавить первую книгу</a>
+                <a href="/books/add" class="btn btn-primary">Добавить первую книгу</a>
             </div>
             {% endif %}
         </div>
     </main>
 
-    <!-- Скрипт для ripple-эффекта -->
     <script>
         document.addEventListener('click', function(e) {
             const btn = e.target.closest('.btn-ripple');
             if (!btn) return;
-
             const ripple = document.createElement('span');
             ripple.classList.add('ripple');
             btn.appendChild(ripple);
-
             const rect = btn.getBoundingClientRect();
             const size = Math.max(rect.width, rect.height);
             ripple.style.width = ripple.style.height = size + 'px';
-
             const x = e.clientX - rect.left - size / 2;
             const y = e.clientY - rect.top - size / 2;
             ripple.style.left = x + 'px';
             ripple.style.top = y + 'px';
-
-            ripple.addEventListener('animationend', () => {
-                ripple.remove();
-            });
+            ripple.addEventListener('animationend', () => ripple.remove());
         });
     </script>
-    <!-- Скрипт для отправки формы добавления книги через JSON -->
     <script>
         (function() {
-            // Находим все формы добавления книги (с классом add-form)
             const forms = document.querySelectorAll('.add-form');
             if (!forms.length) return;
 
             forms.forEach(form => {
                 form.addEventListener('submit', async (event) => {
-                    event.preventDefault(); // отменяем стандартную отправку
+                    event.preventDefault();
 
-                    // Получаем book_id из скрытого поля
                     const bookIdInput = form.querySelector('input[name="book_id"]');
                     if (!bookIdInput) return;
 
                     const data = {
-                        book_id: bookIdInput.value
+                        book_id: parseInt(bookIdInput.value)
                     };
 
                     try {
-                        const response = await fetch(form.action, {
+                        const response = await fetch('/books/my', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -129,11 +115,8 @@
                         });
 
                         if (response.ok) {
-                            // Успешно добавили – перезагружаем страницу, чтобы обновить список
-                            // (или можно перенаправить на страницу библиотеки)
                             window.location.reload();
                         } else {
-                            // Обрабатываем ошибки
                             const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
                             let errorMessage = 'Не удалось добавить книгу. ';
                             if (errorData.detail) {

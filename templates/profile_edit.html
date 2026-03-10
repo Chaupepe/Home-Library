@@ -23,11 +23,9 @@
                 <p class="edit-profile-subtitle">Обновите свои данные</p>
             </header>
 
-            <form class="edit-profile-form" method="post" action="/root/profile/edit" enctype="multipart/form-data" aria-label="Форма редактирования профиля">
-                <!-- CSRF токен (если нужен) -->
-                <!-- <input type="hidden" name="csrf_token" value="..."> -->
-                <!-- Поле delete, которое требует сервер -->
-                <input type="hidden" name="delete" value="false">
+            <form class="edit-profile-form" method="post" action="/profile/edit" enctype="multipart/form-data" aria-label="Форма редактирования профиля">
+                <!-- Флаг удаления аватара, управляется JS -->
+                <input type="hidden" name="delete" value="false" id="deleteFlag">
 
                 <!-- Секция аватара -->
                 <div class="form-section">
@@ -35,7 +33,7 @@
                     <div class="avatar-upload">
                         <div class="profile-avatar" id="avatarPreview" aria-hidden="true">
                             {% if user.avatar %}
-                                <img src="/root/profile/avatar" alt="Аватар" class="avatar-img">
+                                <img src="/profile/avatar" alt="Аватар" class="avatar-img">
                             {% else %}
                                 <span class="material-icons">person</span>
                             {% endif %}
@@ -112,7 +110,7 @@
                         <span class="material-icons btn-icon">save</span>
                         Сохранить изменения
                     </button>
-                    <a href="/root/profile" class="btn btn-outline btn-large">
+                    <a href="/profile" class="btn btn-outline btn-large">
                         <span class="material-icons btn-icon">close</span>
                         Отмена
                     </a>
@@ -122,11 +120,12 @@
     </main>
 
     <script>
-        // Предпросмотр аватара
         const avatarInput = document.getElementById('avatar');
         const avatarPreview = document.getElementById('avatarPreview');
         const removeBtn = document.getElementById('removeAvatar');
+        const deleteFlag = document.getElementById('deleteFlag');
 
+        // Предпросмотр аватара при загрузке
         if (avatarInput && avatarPreview) {
             avatarInput.addEventListener('change', function() {
                 const file = this.files[0];
@@ -136,14 +135,17 @@
                         avatarPreview.innerHTML = `<img src="${e.target.result}" alt="Avatar preview" class="preview-img">`;
                     };
                     reader.readAsDataURL(file);
+                    deleteFlag.value = 'false'; // загружаем новый — не удаляем
                 }
             });
         }
 
+        // Удаление аватара — выставляем флаг delete=true
         if (removeBtn && avatarPreview && avatarInput) {
             removeBtn.addEventListener('click', function() {
                 avatarInput.value = '';
                 avatarPreview.innerHTML = '<span class="material-icons">person</span>';
+                deleteFlag.value = 'true'; // сообщаем серверу удалить аватар
             });
         }
 

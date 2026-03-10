@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Моя библиотека — Bookshop</title>
-    <!-- Google Fonts Inter + Material Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Общие стили -->
     <link rel="stylesheet" href="/static/base.css">
     <link rel="stylesheet" href="/static/components.css">
-    <!-- Стили для страницы "Моя библиотека" -->
     <link rel="stylesheet" href="/static/my_library.css">
 </head>
 <body>
     <main class="my-library-page" aria-labelledby="library-heading">
         <div class="library-card">
             <header class="library-header">
-                <a href="/root/profile" class="btn-back" aria-label="Назад в профиль">
+                <a href="/profile" class="btn-back" aria-label="Назад в профиль">
                     <span class="material-icons">arrow_back</span>
                 </a>
                 <h1 id="library-heading" class="library-title">Моя библиотека</h1>
-                <a href="/root/profile/all_books" class="btn btn-primary">
+                <a href="/books" class="btn btn-primary">
                     <span class="material-icons btn-icon">add</span>
                     Добавить книгу
                 </a>
@@ -42,7 +39,7 @@
                         <p class="book-year">{{ book.year_of_publication }}</p>
                     </div>
                     <div class="book-actions">
-                        <form action="/root/my_library" method="post" class="add-form">
+                        <form action="/profile/books" method="post" class="delete-form">
                             <input type="hidden" name="book_id" value="{{ book.id }}">
                             <button class="btn-icon-only" aria-label="Удалить">
                                 <span class="material-icons">delete</span>
@@ -56,10 +53,58 @@
             <div class="empty-state">
                 <span class="material-icons empty-icon">library_books</span>
                 <p class="empty-text">В вашей библиотеке пока нет книг</p>
-                <a href="/root/profile/all_books" class="btn btn-primary">Добавить первую книгу</a>
+                <a href="/books" class="btn btn-primary">Добавить первую книгу</a>
             </div>
             {% endif %}
         </div>
     </main>
+
+    <script>
+    (function() {
+        const forms = document.querySelectorAll('.delete-form');
+        if (!forms.length) return;
+
+        forms.forEach(form => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                const bookIdInput = form.querySelector('input[name="book_id"]');
+                if (!bookIdInput) return;
+
+                const data = {
+                    book_id: parseInt(bookIdInput.value)
+                };
+
+                try {
+                    const response = await fetch('/profile/books', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
+                        let errorMessage = 'Не удалось удалить книгу. ';
+                        if (errorData.detail) {
+                            if (Array.isArray(errorData.detail)) {
+                                errorMessage += errorData.detail.map(err => err.msg).join('; ');
+                            } else if (typeof errorData.detail === 'string') {
+                                errorMessage += errorData.detail;
+                            }
+                        }
+                        alert(errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Ошибка сети:', error);
+                    alert('Не удалось отправить запрос. Проверьте соединение.');
+                }
+            });
+        });
+    })();
+    </script>
 </body>
 </html>

@@ -4,19 +4,18 @@ from datetime import date
 
 
 class UserBase(BaseModel):
-    name: str
     email: EmailStr
 
 
 class UserLogin(UserBase):
-    pass
-
-
-class UserCreate(UserBase):
     password: str
 
 
-class User(UserCreate):
+class UserCreate(UserLogin):
+    name: str
+
+
+class User(UserBase):
     id: int
     class Config:
         from_attributes = True
@@ -27,7 +26,7 @@ class Token(BaseModel):
     token_type: str = 'bearer'
 
 class TokenData(BaseModel):
-    email: str = None
+    email: str
 
 
 class BooksBase(BaseModel):
@@ -39,9 +38,10 @@ class BooksBase(BaseModel):
 
 
 class CreateBooks(BooksBase):
-    id: int
+    pass
 
 class Books(CreateBooks):
+    id: int
     class Config:
         from_attributes = True
 

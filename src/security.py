@@ -2,16 +2,13 @@
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from src.schemas import TokenData
-from dotenv import load_dotenv
-import os
 
 from src.templates import pwd_context
+from src.database import settings
 
-load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
-ACCESS_TOKEN_EXPIRE_HOURS = os.getenv("ACCESS_TOKEN_EXPIRE_HOURS")
+SECRET_KEY = settings.SECRET_KEY
+ALGORITHM = settings.ALGORITHM
 
 
 def create_access_token(data: TokenData):
@@ -28,15 +25,12 @@ def verify_token(token: str, credentials_exception):
     """Проверяет JWT токен"""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        if  payload.get("sub") is None:
+        email = payload.get("sub")
+        if  email is None:
             raise credentials_exception
-        return True
+        return TokenData(email=email)
     except JWTError:
         raise credentials_exception
-
-
-def decode_access_token(token: str):
-    return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
 
 
 def hash_password(password: str) -> str:

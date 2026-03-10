@@ -23,7 +23,7 @@
                 <p class="add-book-subtitle">Заполните информацию о книге</p>
             </header>
 
-            <form class="add-book-form" method="post" action="/root/profile/add_book" aria-label="Форма добавления книги">
+            <form class="add-book-form" method="post" action="/books" aria-label="Форма добавления книги">
                 <!-- CSRF токен (если нужен) -->
                 <!-- <input type="hidden" name="csrf_token" value="..."> -->
 
@@ -75,7 +75,7 @@
                         <span class="material-icons btn-icon">add</span>
                         Добавить книгу
                     </button>
-                    <a href="/root/my_library" class="btn btn-outline btn-large">
+                    <a href="/profile/books" class="btn btn-outline btn-large">
                         <span class="material-icons btn-icon">arrow_back</span>
                         Назад в библиотеку
                     </a>
@@ -103,7 +103,7 @@
                 };
 
                 try {
-                    const response = await fetch('/root/profile/add_book', {
+                    const response = await fetch('/books', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -118,7 +118,7 @@
                             window.location.href = result.redirect_url;
                         } else {
                             // По умолчанию на страницу библиотеки
-                            window.location.href = '/root/my_library';
+                            window.location.href = '/books/my';
                         }
                     } else {
                         // Обработка ошибок от сервера

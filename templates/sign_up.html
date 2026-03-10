@@ -23,10 +23,7 @@
                 <p class="signup-subtitle">Присоединяйтесь к тысячам читателей</p>
             </div>
 
-            <form class="signup-form" method="post" action="/root/sign_up">
-                <!-- CSRF токен (если нужно) -->
-                <!-- <input type="hidden" name="csrf_token" value="..."> -->
-
+            <form class="signup-form" method="post" action="/auth/register">
                 <div class="input-group">
                     <span class="material-icons input-icon">person</span>
                     <input type="text" id="name" name="name"
@@ -71,12 +68,11 @@
             </form>
 
             <div class="signup-footer">
-                <p>Уже есть аккаунт? <a href="/root/authorization">Войти</a></p>
+                <p>Уже есть аккаунт? <a href="/auth/login">Войти</a></p>
             </div>
         </div>
     </main>
 
-    <!-- Небольшой скрипт для показа пароля (можно добавить) -->
     <script>
         document.querySelectorAll('.password-toggle').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -91,27 +87,24 @@
                 }
             });
         });
-
     </script>
     <script>
     (function() {
-        const form = document.querySelector('.signup-form'); // правильный класс
+        const form = document.querySelector('.signup-form');
         if (!form) return;
 
         form.addEventListener('submit', async (event) => {
-            event.preventDefault(); // отменяем стандартную отправку
+            event.preventDefault();
 
-            // Собираем данные
             const formData = new FormData(form);
             const data = {
                 name: formData.get('name'),
                 email: formData.get('email'),
                 password: formData.get('password'),
-                terms: formData.has('terms') && formData.get('terms') === 'on' // true/false
             };
 
             try {
-                const response = await fetch('/root/sign_up', { // правильный URL
+                const response = await fetch('/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -120,16 +113,8 @@
                 });
 
                 if (response.ok) {
-                    // Успешная регистрация – перенаправляем на страницу входа (или куда нужно)
-                    const result = await response.json().catch(() => ({}));
-                    if (result.redirect_url) {
-                        window.location.href = result.redirect_url;
-                    } else {
-                        // По умолчанию – на страницу входа
-                        window.location.href = '/root/authorization';
-                    }
+                    window.location.href = '/auth/login';
                 } else {
-                    // Обрабатываем ошибки от сервера
                     const errorData = await response.json().catch(() => ({ detail: 'Ошибка сервера' }));
                     let errorMessage = 'Ошибка регистрации. ';
                     if (errorData.detail) {
@@ -147,6 +132,6 @@
             }
         });
     })();
-</script>
+    </script>
 </body>
 </html>
